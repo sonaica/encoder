@@ -122,29 +122,43 @@ int main() {
     if (table[i].size() != 0) {
       std::vector<bool> temp;
       int symb = i;
+      std::cout << symb << " ";
       for (int j = 0; j < 8; ++j) {
         temp.push_back(symb & 1);
         symb >>= 1;
       }
       for (int j = temp.size() - 1; j >= 0; --j) {
-        vecprint.push_back(temp[i]);
+        vecprint.push_back(temp[j]);
       }
+      int ind = vecprint.size();
       GammaCode(table[i], vecprint);
+      for (int j = ind; j < vecprint.size(); ++j) {
+        std::cout << vecprint[j];
+      }
+      std::cout << " ";
+      for (int j = 0; j < table[i].size(); ++j) {
+        std::cout << (int)table[i][j];
+      }
+      std::cout << '\n';
     }
+  }
+
+  std::cout << "\n\n";
+  for (int i = 0; i < text.size(); ++i) {
+    std::cout << vecprint.size() << " ";
+    std::cout << text[i] << " ";
+    for (int j = table[text[i]].size() - 2; j >= 0; --j) {
+      bool bit = table[text[i]][j];
+      vecprint.push_back(bit);
+      std::cout << (int)bit;
+    }
+    std::cout << '\n';
   }
   int md = vecprint.size() % 8;
   for (int i = 7; i >= 0; --i) {
     vecprint[i] = md & 1;
     md >>= 1;
   }
-
-  for (int i = 0; i < text.size(); ++i) {
-    for (int j = 0; j < table[text[i]].size(); ++j) {
-      bool bit = table[text[i]][j];
-      vecprint.push_back(bit);
-    }
-  }
-
   uint8_t byte = 0;
 
   for (int i = 0; i < vecprint.size(); ++i) {
@@ -153,7 +167,6 @@ int main() {
       byte = 0;
     }
     if (vecprint[i]) byte |= (1 << (8 - i % 8 - 1));
-    std::cout << (int)vecprint[i];
   }
   if (byte != 0) out.write((char*)&byte, 1);
 
